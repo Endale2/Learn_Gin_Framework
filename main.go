@@ -20,7 +20,7 @@ func main() {
 	r.GET("users/:id", func (ctx *gin.Context){
 		id:=ctx.Param("id")
 
-		ctx.JSON(201, gin.H{"user_id":id})
+		ctx.JSON(200, gin.H{"user_id":id})
 	})
 
     // start server on port 8080
