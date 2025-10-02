@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +17,11 @@ func main() {
             "message": "pong",
         })
     })
-	
+	r.GET("users/:id", func (ctx *gin.Context){
+		id:=ctx.Param("id")
+
+		ctx.JSON(201, gin.H{"user_id":id})
+	})
 
     // start server on port 8080
     r.Run(":8080")
