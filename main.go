@@ -16,6 +16,7 @@ type  Publisher struct{
 	City  string  `json:"city"`
 }
 
+
 func  CreateBooks(c  *gin.Context){
 	var  book  Book
 	err:=c.BindJSON(&book);
