@@ -7,80 +7,91 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var books []Book
 
-type  Book  struct {
-	Id  int  `json:"id"`
+var  books []Book
+type  Book  struct{
+	ID  int  `json:"id"`
 	Title string  `json:"title"`
 	Author string `json:"author"`
-	Publisher  Publisher `json:"publisher"`
+	Price   int  `json:"price"`
 }
 
-type  Publisher struct{
-	Name  string  `json:"name"`
-	City  string  `json:"city"`
-}
 
-func  CreateBooks(c  *gin.Context){
-	var  book  Book
-	err:=c.BindJSON(&book);
-
-	if  err!=nil{
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-	book.Id  = len(books) +1
-    books = append(books, book)
-  
-	c.JSON(200, gin.H{"message":"Book  Received", "book":book})
-}
-
-func  GetAllBooks(  c  *gin.Context){
+func  GetAllBooks(c *gin.Context){
+   if len(books)==0{
+	c.JSON(200, gin.H{"msg":"No  Books"})
+	return 
+   }
    c.JSON(200, books)
 }
 
+func  GetBookByID(c *gin.Context){
+	strId:=c.Param("id")
+	Id, err:=strconv.Atoi(strId)
+	if err!=nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Invalid ID"})
+	}
 
-func  GetBook(  c *gin.Context){
-	idstr:=c.Param("id")
-id,err:=strconv.Atoi(idstr)
-if  err!=nil{
-	c.JSON(http.StatusBadRequest, map[string]any{"error":"Invalid ID"})
-}
-	var  foundBook  *Book 
+	var  foundBook *Book
 
-	for _,  book:=range books{
-		if  book.Id==id{
-			foundBook = &book
+	for _, book:= range books{
+		if Id==book.ID{
+			foundBook=&book
 			break
 		}
 	}
 
-	if foundBook==nil{
-		c.JSON(http.StatusNotFound, gin.H{"error":"Book  Not  Found"})
+	if  foundBook==nil{
+		c.JSON(http.StatusNotFound, gin.H{"error":"The book is Not Found!"})
 		return
 	}
 
-c.JSON(http.StatusOK, foundBook)
+	c.JSON(http.StatusOK, foundBook)
 }
 
 
-func  BookMiddleware(c *gin.Context){
-	if len(books)==0{
-		c.JSON(http.StatusNotFound, gin.H{"msg":"There  are  NO  Books  LIsted"})
-		c.Abort()
-		return
+func  CreateNewBook(c *gin.Context){
+	var  book Book
+
+	err:=c.BindJSON(&book)
+	if err!=nil{
+      c.JSON(http.StatusBadRequest, gin.H{"error":"Error  Binding JSON"})
+	  return
 	}
 
+	book.ID=len(books)+1
+	books =append(books,book)
+
+	c.JSON(http.StatusOK, gin.H{"msg":"the  book is  successfully  created","book":book})
+}
+
+
+func  DeleteBook(c  *gin.Context){
+
+}
+
+//middleware
+
+func  BookMiddleware(c  *gin.Context){
+	if len(books)==0{
+		c.JSON(404, gin.H{"msg":"no books  yet"})
+		c.Abort()
+	}
 	c.Next()
 }
 
 func  main(){
 
-	r:=gin.Default()
+	r:=gin.New()
+	r.Use(gin.Logger())
 
-	r.POST("/books", CreateBooks)
-	r.GET("/books",BookMiddleware, GetAllBooks)
-	r.GET("/books/:id", GetBook)
+
+	r.GET("/books", GetAllBooks)
+	r.GET("/books/:id", GetBookByID)
+	r.POST("/books", CreateNewBook)
+	r.DELETE("/books/:id", DeleteBook)
+
 
 	r.Run(":8080")
+
 }
