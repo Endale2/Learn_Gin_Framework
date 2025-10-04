@@ -64,12 +64,22 @@ c.JSON(http.StatusOK, foundBook)
 }
 
 
+func  BookMiddleware(c *gin.Context){
+	if len(books)==0{
+		c.JSON(http.StatusNotFound, gin.H{"msg":"There  are  NO  Books  LIsted"})
+		c.Abort()
+		return
+	}
+
+	c.Next()
+}
+
 func  main(){
 
 	r:=gin.Default()
 
 	r.POST("/books", CreateBooks)
-	r.GET("/books", GetAllBooks)
+	r.GET("/books",BookMiddleware, GetAllBooks)
 	r.GET("/books/:id", GetBook)
 
 	r.Run(":8080")
