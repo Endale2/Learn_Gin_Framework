@@ -67,7 +67,15 @@ func  CreateNewBook(c *gin.Context){
 
 
 func  DeleteBook(c  *gin.Context){
+	id,err:=strconv.Atoi(c.Param("id"))
+	if err!=nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Invalid  ID"})
+		return
+	}
+	index:=id -1
+   books =append(books[:index], books[index + 1:]...)
 
+   c.JSON(http.StatusOK, gin.H{"msg":"successfully  Deleted"})
 }
 
 //middleware
@@ -86,7 +94,7 @@ func  main(){
 	r.Use(gin.Logger())
 
 
-	r.GET("/books", GetAllBooks)
+	r.GET("/books",BookMiddleware, GetAllBooks)
 	r.GET("/books/:id", GetBookByID)
 	r.POST("/books", CreateNewBook)
 	r.DELETE("/books/:id", DeleteBook)
