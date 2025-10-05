@@ -60,6 +60,20 @@ func  CreateNewBook(c *gin.Context){
 	  return
 	}
 
+	if book.Title=="" {
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Title  cannot  be  empty"})
+		return
+	}
+
+	if book.Author ==""{
+      c.JSON(http.StatusBadRequest, gin.H{"error":"Author  is  required"})
+	  return
+	}
+
+	if  book.Price <=0{
+      c.JSON(http.StatusBadRequest, gin.H{"error":"Price  should  be  above  zero"})
+	}
+
 	book.ID=len(books)+1
 	books =append(books,book)
 
