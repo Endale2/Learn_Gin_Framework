@@ -30,6 +30,7 @@ func  GetBookByID(c *gin.Context){
 	Id, err:=strconv.Atoi(strId)
 	if err!=nil{
 		c.JSON(http.StatusBadRequest, gin.H{"error":"Invalid ID"})
+		return
 	}
 
 	var  foundBook *Book
