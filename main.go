@@ -151,11 +151,13 @@ func  main(){
 	r:=gin.New()
 	r.Use(gin.Logger())
 
-
-	r.GET("/books",BookMiddleware, GetAllBooks)
-	r.GET("/books/:id", GetBookByID)
-	r.POST("/books", CreateNewBook)
-	r.DELETE("/books/:id", DeleteBook)
+    api:=r.Group("/api")
+	v1:=api.Group("/v1")
+	books:=v1.Group("/books")
+	books.GET("/",BookMiddleware, GetAllBooks)
+	books.GET("/:id", GetBookByID)
+	books.POST("/", CreateNewBook)
+	books.DELETE("/:id", DeleteBook)
 
 
 	r.Run(":8080")
