@@ -16,13 +16,53 @@ type  Book  struct{
 	Price   int  `json:"price"`
 }
 
+func GetAllBooks(c *gin.Context) {
+    author := c.Query("author")
+    minPriceStr := c.Query("minprice")
+    maxPriceStr := c.Query("maxprice")
 
-func  GetAllBooks(c *gin.Context){
-   if len(books)==0{
-	c.JSON(200, gin.H{"msg":"No  Books"})
-	return 
-   }
-   c.JSON(200, books)
+    // Convert prices to integers (if provided)
+    var minPrice, maxPrice int
+    var err error
+
+    if minPriceStr != "" {
+        minPrice, err = strconv.Atoi(minPriceStr)
+        if err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "minprice must be a number"})
+            return
+        }
+    }
+
+    if maxPriceStr != "" {
+        maxPrice, err = strconv.Atoi(maxPriceStr)
+        if err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "maxprice must be a number"})
+            return
+        }
+    }
+
+    // Filter books
+    var filtered []Book
+    for _, book := range books {
+        if author != "" && book.Author != author {
+            continue
+        }
+        if minPriceStr != "" && book.Price < minPrice {
+            continue
+        }
+        if maxPriceStr != "" && book.Price > maxPrice {
+            continue
+        }
+        filtered = append(filtered, book)
+    }
+
+    // Response
+    if len(filtered) == 0 {
+        c.JSON(http.StatusOK, gin.H{"msg": "No books match the filter"})
+        return
+    }
+
+    c.JSON(http.StatusOK, filtered)
 }
 
 func  GetBookByID(c *gin.Context){
