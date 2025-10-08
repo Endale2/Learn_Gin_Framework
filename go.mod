@@ -1,4 +1,4 @@
-module github.com/yourname/gin-rest-api
+module github.com/Endale2/Learn_Gin_Framework
 
 go 1.23.2
 
