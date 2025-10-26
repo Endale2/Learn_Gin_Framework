@@ -1,15 +1,17 @@
 package main
 
 import (
-	"github.com/Endale2/Learn_Gin_Framework/routes"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	r := gin.New()
-	r.Use(gin.Logger())
+func main(){
+	 r:=gin.Default()
 
-	routes.BookRoutes(r)
+	 r.GET("/", func (c *gin.Context){
+      c.JSON(http.StatusOK, gin.H{"msg":"It is Working....."} )
+	 })
 
-	r.Run(":8080")
+	 r.Run(":8080")
 }
