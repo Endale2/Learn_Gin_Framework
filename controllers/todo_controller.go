@@ -13,25 +13,31 @@ import (
 )
 
 // GET /todos
-func GetTodos(c *gin.Context) {
-	collection := database.DB.Collection("todos")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+func GetTodos(c *gin.Context){
+	collection:=database.DB.Collection("todos")
+	ctx, cancel:=context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+	cursor,err:=collection.Find(ctx, bson.M{})
 
-	cursor, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch todos"})
+	if err!=nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"error":"unable to fetch todos!"})
 		return
 	}
+
 	defer cursor.Close(ctx)
 
-	var todos []models.Todo
-	if err := cursor.All(ctx, &todos); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse todos"})
+	var  todos []models.Todo
+
+	err=cursor.All(ctx, &todos)
+
+	if err!=nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"error":"Failed to Parse todos"})
 		return
 	}
 
 	c.JSON(http.StatusOK, todos)
+
+
 }
 
 // GET /todos/:id

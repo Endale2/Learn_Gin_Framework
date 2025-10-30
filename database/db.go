@@ -7,26 +7,28 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	
 )
+var DB *mongo.Database 
 
-var DB *mongo.Database
 
-func ConnectDatabase() {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+func  ConnectDatabase(){
+	clientOptions:=options.Client().ApplyURI("mongodb://localhost:27017")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, clientOptions)
-	if err != nil {
-		log.Fatal("MongoDB connection error:", err)
+	client,err :=mongo.Connect(ctx, clientOptions)
+
+	if err!=nil{
+		log.Fatal("MongoDB   connection error..", err)
 	}
 
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		log.Fatal("MongoDB ping error:", err)
-	}
 
 	DB = client.Database("todo_app")
-	log.Println("Connected to MongoDB!")
+
+	log.Println("MongoDB  connected!")
+
+
 }
