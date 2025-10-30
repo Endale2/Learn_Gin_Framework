@@ -41,22 +41,25 @@ func GetTodos(c *gin.Context){
 }
 
 // GET /todos/:id
-func GetTodoById(c *gin.Context) {
-	idParam := c.Param("id")
-	objectID, err := primitive.ObjectIDFromHex(idParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+func GetTodoById(c*gin.Context){
+	idParam :=c.Param("id")
+
+	objectID, err:=primitive.ObjectIDFromHex(idParam)
+
+	if err!=nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error":"Invalid ID!"})
 		return
 	}
 
-	collection := database.DB.Collection("todos")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection:=database.DB.Collection("todos")
+   ctx , cancel :=context.WithTimeout(context.Background(), 5*time.Second)
+   defer cancel()
+   
+   var  todo models.Todo
+	err = collection.FindOne(ctx, bson.M{"_id":objectID}).Decode(&todo)
 
-	var todo models.Todo
-	err = collection.FindOne(ctx, bson.M{"_id": objectID}).Decode(&todo)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Todo not found"})
+	if err!=nil{
+		c.JSON(http.StatusNotFound, gin.H{"error":"Todo is Not  Found!"})
 		return
 	}
 
