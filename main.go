@@ -1,17 +1,16 @@
 package main
 
 import (
-	"net/http"
-
+	"github.com/Endale2/Learn_Gin_Framework/database"
+	"github.com/Endale2/Learn_Gin_Framework/routes"
 	"github.com/gin-gonic/gin"
 )
 
-func main(){
-	 r:=gin.Default()
+func main() {
+	r := gin.Default()
 
-	 r.GET("/", func (c *gin.Context){
-      c.JSON(http.StatusOK, gin.H{"msg":"It is Working....."} )
-	 })
+	database.ConnectDatabase()
+	routes.TodoRoutes(r)
 
-	 r.Run(":8080")
+	r.Run(":8080")
 }
